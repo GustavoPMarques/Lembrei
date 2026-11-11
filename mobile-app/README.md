@@ -23,13 +23,11 @@ Use Node.js e npm instalados. O ambiente verificado utiliza Node 26.6.0.
 O React Native 0.86.3 instalado declara engines.node:
 ^20.19.4 || ^22.13.0 || ^24.3.0 || >= 25.0.0.
 Use uma versao compativel; npm ci instala as versoes do package-lock.json.
-No Android, use Expo Go compativel com SDK 57. O fluxo iOS tem componentes
-especificos, mas nao foi validado neste projeto em aparelho iOS.
+No Android, use Expo Go compativel com SDK 57.
 
 A API publicada e https://lembrei-api.onrender.com/api/v1. Nao e necessario
 executar o backend localmente para usar esse endereco. O Oracle deve estar
-acessivel pelo servico do Render. A primeira requisicao pode demorar apos
-inatividade do plano gratuito; aguarde a API iniciar e tente novamente.
+acessivel pelo servico do Render. Android e web utilizam a mesma API publicada.
 Em um PowerShell, partindo da raiz do repositorio:
 
 ```powershell
@@ -85,8 +83,8 @@ nao e segredo. Nunca coloque senhas ou chaves privadas no app ou em EXPO_PUBLIC_
 Veja ../SEGURANCA.txt antes de publicar ou compartilhar uma copia do projeto.
 
 No celular, localhost aponta ao proprio celular, nao ao computador.
-Com Render, confira a URL HTTPS, a conexao com a internet e se o servico ja
-despertou. Somente no modo local, confira API/Expo ligados, IP correto e
+Com Render, confira a URL HTTPS, a conexao com a internet e o estado da conexao
+nos Ajustes. No modo local, confira API/Expo ligados, IP correto e
 acesso de rede as portas 8080 (API) e 8081 (Expo).
 
 O CORS da API ja permite http://localhost:8081. Se abrir a versao web por um
@@ -297,11 +295,31 @@ visuais compartilhados. ConnectionState apresenta carregamento, erro e reconexao
 clearLegacyReminders cancela somente agendamentos identificados como lembrei
 de instalacoes anteriores. Na web nao faz operacoes nativas nem pede permissoes.
 
-## 12. LIMITES E DOCUMENTACAO GERAL
+## 12. INTEGRACAO COM O BACKEND PUBLICADO
 
-Nao ha modo offline de negocio nem notificacoes ativas. Confirmacoes e estoque
-dependem da API e do Oracle. Android e web nao compartilham identidade.
-A previsao presume a agenda atual, sem reconstruir historicos antigos.
-Para proposta, publico, ODS, arquitetura e roteiro integrado, veja ../README.md.
-Para entidades e relacionamentos, veja ../database/modelo/README.md.
-Os detalhes HTTP estao em ../backend-api/lembrei-api/README.md.
+Android e web acessam https://lembrei-api.onrender.com/api/v1 por HTTPS.
+A .env.example fornece essa URL para a primeira configuracao. O aplicativo
+pode ser testado com o backend local desligado. Cada instalacao envia seu UUID
+no cabecalho X-Dispositivo-Id para consultar os cuidados associados.
+
+Em Ajustes, a secao Conexao apresenta o estado da API e permite salvar outro
+endereco. Quando EXPO_PUBLIC_API_URL muda, a preferencia e atualizada uma vez;
+alteracoes posteriores feitas nos Ajustes continuam disponiveis.
+
+## 13. CI NO GITHUB ACTIONS
+
+O job mobile-test do [workflow](../.github/workflows/ci-cd.yml) instala Node
+26.6.0 e executa npm ci, npm run typecheck, npm run lint e npm test. Em seguida,
+exporta Android e web pelo Expo. A URL publica da API e definida no ambiente
+do job; as credenciais Oracle ficam no backend.
+
+O job executa em paralelo com os testes do backend e do Oracle descartavel.
+A aprovacao do mobile faz parte das dependencias do build Docker e do disparo
+do deploy. O fluxo completo foi aprovado no GitHub Actions.
+
+## 14. DOCUMENTACAO COMPLEMENTAR
+
+- [Proposta, publico, ODS, arquitetura e execucao](../README.md).
+- [MER, DER e dicionario de dados](../database/modelo/README.md).
+- [Contratos HTTP e backend](../backend-api/lembrei-api/README.md).
+- [Swagger publicado](https://lembrei-api.onrender.com/swagger-ui.html).

@@ -250,12 +250,26 @@ packages divididos por responsabilidade, triggers e testes. Mantemos bloqueios
 FOR UPDATE para proteger o estoque em operacoes simultaneas e validacao do
 SQL dinamico. Sao recursos com funcao concreta nas regras do projeto.
 
-## Transacoes, seguranca e automacao
+## CI do banco no GitHub Actions
 
-No GitHub Actions, `ci/run_ci.sh` cria um Oracle Free descartavel, com senha
-temporaria gerada a cada execucao, e instala 01, 03, 04 e 05. Depois executa
-06 e os testes Java de integracao. A carga de exemplo 02 nao e necessaria.
-O container e removido no fim. Esse fluxo nao acessa nem altera o Oracle FIAP.
+O job `oracle-db` do [workflow](../.github/workflows/ci-cd.yml) executa
+`ci/run_ci.sh` em um Oracle Free descartavel, com senha temporaria gerada a
+cada execucao. O script aguarda uma consulta SQL responder com sucesso antes
+de instalar os objetos.
+
+O fluxo executa `01` (DDL), `03` (procedures), `04` (packages), `05` (triggers)
+e `06` (verificacoes SQL). Em seguida, o Maven executa `OracleIntegrationTest`
+contra o mesmo banco descartavel. A carga de exemplo `02` e opcional para uso
+manual e nao participa do CI.
+
+Os logs SQL e relatorios de integracao ficam no artefato `testes-oracle` por
+sete dias. O container e removido ao final. Esse job e uma das dependencias
+do build Docker e do deploy; o fluxo completo passou no GitHub Actions.
+
+O banco acessado pela API hospedada no Render continua sendo o Oracle FIAP.
+O job de testes utiliza apenas o container, com credenciais temporarias.
+
+## Transacoes, seguranca e automacao
 
 As procedures de escrita nao executam COMMIT: a API controla a transacao com
 `@Transactional`. Os savepoints permitem desfazer as alteracoes de uma operacao

@@ -8,7 +8,7 @@ Lembrar os horários dos cuidados, registrar o que já foi realizado e perceber 
 
 O público principal são pessoas idosas que utilizam um smartphone. Pessoas com dificuldades de digitação também podem se beneficiar do seletor de horário. O aplicativo não exige login nem senha: identifica cada instalação por um UUID persistido localmente.
 
-A relação com o **ODS 3 — Saúde e Bem-Estar** está no apoio à organização dos cuidados e ao acompanhamento da rotina. O aplicativo não prescreve medicamentos, define doses ou substitui orientação profissional. Os resultados apresentados são registros do usuário e estimativas baseadas na agenda cadastrada.
+A relação com o **ODS 3 — Saúde e Bem-Estar** está no apoio à organização dos cuidados e ao acompanhamento da rotina. Os resultados apresentados são registros do usuário e estimativas baseadas na agenda cadastrada.
 
 ## Funcionalidades principais
 
@@ -21,11 +21,26 @@ A relação com o **ODS 3 — Saúde e Bem-Estar** está no apoio à organizaç�
 
 O nome e a configuração de conexão ficam em Ajustes. Identificação e personalização não são contabilizadas como funcionalidades principais.
 
+## API publicada
+
+O backend está hospedado no Render com HTTPS e conectado ao Oracle FIAP.
+O aplicativo Android e a versão web utilizam a mesma API publicada.
+
+| Acesso | Endereço |
+| --- | --- |
+| API REST | https://lembrei-api.onrender.com/api/v1 |
+| Swagger | https://lembrei-api.onrender.com/swagger-ui.html |
+| Contrato OpenAPI | https://lembrei-api.onrender.com/v3/api-docs |
+
+Para testar o aplicativo, instale as dependências de `mobile-app`, copie
+`.env.example` para `.env` na primeira configuração e execute `npm start`.
+O modelo já contém a URL pública; o backend local pode permanecer desligado.
+
 ## Arquitetura e tecnologias
 
 ```mermaid
 flowchart TD
-    APP[React Native + Expo Go / Web] -->|REST / JSON e UUID| API[Spring Boot / Java 21]
+    APP[React Native + Expo Go / Web] -->|HTTPS / REST / JSON e UUID| API[Render: Spring Boot / Java 21]
     API --> C[Controller]
     C --> S[Service]
     S --> R[Repository / JDBC]
@@ -44,6 +59,8 @@ flowchart TD
 | Lombok | Redução de construtores e métodos de acesso repetitivos. |
 | Oracle PL/SQL | Automação de geração da rotina, confirmação, estoque e relatórios. |
 | Swagger / OpenAPI | Consulta e teste dos contratos HTTP. |
+| Docker | Compilação em JDK 21 e execução da API em Java 21 no Render. |
+| GitHub Actions | Validação do código, testes do Oracle e disparo do deploy do commit aprovado. |
 
 As entidades e regras representam o cadastro de cuidados, a agenda, as confirmações e os movimentos de estoque.
 
@@ -62,7 +79,7 @@ As entidades e regras representam o cadastro de cuidados, a agenda, as confirma�
 
 Para testar somente o aplicativo com a API publicada, siga diretamente a etapa 3. As etapas 1 e 2 servem para executar seu próprio backend localmente.
 
-Requisitos: JDK 21, Node.js compatível com o SDK 57 (consulte o README mobile), npm, acesso ao Oracle e um cliente como SQL Developer. Para testar no Android, use Expo Go compatível com SDK 57 e a mesma rede local do computador. Não é necessário alterar permanentemente o Java do sistema.
+Para usar a API publicada: Node.js compatível com o SDK 57 (consulte o README mobile), npm e Expo Go compatível com SDK 57 no Android. No desenvolvimento com Expo Go, mantenha o aparelho na mesma rede do computador que executa o Expo. Para executar também o backend localmente, use JDK 21, acesso ao Oracle e um cliente como SQL Developer.
 
 ### 1. Preparar o Oracle
 
@@ -106,20 +123,40 @@ Comandos Linux/macOS equivalentes usam `cp` e `./mvnw`; configure o JDK 21 na se
 
 O mobile usa `FlatList`, consultas paginadas, cancelamento com `AbortController`, descarte de respostas antigas e limpeza de timers e listeners. Não mantém históricos completos em caches globais nem filas offline crescentes. A API limita paginação e conexões, fecha recursos JDBC e agrega os relatórios no Oracle. As práticas e limites estão detalhados nos READMEs de cada componente.
 
-A interface oferece botões amplos, rótulos acessíveis, status descritos em texto, fontes que acompanham a escala do sistema, tratamento do teclado e seletor nativo de horário. São decisões implementadas; não representam certificação de acessibilidade nem estudo de usabilidade com o público-alvo.
+A interface oferece botões amplos, rótulos acessíveis, status descritos em texto, fontes que acompanham a escala do sistema, tratamento do teclado e seletor nativo de horário.
+
+## CI/CD com GitHub Actions
+
+O [workflow CI/CD](.github/workflows/ci-cd.yml) executa em push e pull request
+para `main`, além de permitir execução manual pelo GitHub Actions.
+
+| Job | Verificação |
+| --- | --- |
+| `build-test` | Instala Java 21, compila a API, executa os testes e gera o JAR. |
+| `mobile-test` | Instala Node 26.6.0 e dependências, verifica TypeScript e lint, executa testes unitários e exporta Android e web. |
+| `oracle-db` | Cria Oracle Free descartável, instala os scripts SQL, executa as verificações do banco e os testes Java de integração. |
+| `docker-build` | Constrói a imagem da API após backend, mobile e Oracle serem aprovados. |
+| `deploy` | Em push na `main` ou execução manual nessa branch, solicita ao Render o deploy do SHA aprovado. |
+
+Os três primeiros jobs executam em paralelo. A imagem Docker depende deles;
+o deploy depende de todas as verificações. Pull requests executam a validação.
+O fluxo completo foi executado com sucesso no GitHub Actions.
+
+O Auto-Deploy do Render permanece desligado. O job de deploy utiliza Bash e
+`curl`, com o Deploy Hook armazenado no secret `RENDER_DEPLOY_HOOK_URL`.
+O Render recebe o SHA do commit aprovado e constrói a aplicação pelo Dockerfile.
+O resultado da solicitação aparece no Actions; a conclusão da publicação aparece
+no painel do Render como **Live**.
+
+Os artefatos `testes-backend`, `testes-oracle` e `lembrei-api-jar` ficam disponíveis
+na execução do Actions por sete dias. O Oracle de CI recebe uma senha temporária
+e é removido ao final. As credenciais do Oracle FIAP ficam nas variáveis do Render;
+os testes do workflow utilizam o banco descartável.
 
 ## Verificações e demonstração
 
-O workflow `.github/workflows/ci-cd.yml` verifica o backend, o mobile, os scripts
-SQL em Oracle descartável e a imagem Docker. Pull requests executam as
-validações; push na `main` e execução manual nessa branch podem solicitar o
-deploy após todas elas passarem. O Render deve ficar com Auto-Deploy desligado.
-O único secret exigido é `RENDER_DEPLOY_HOOK_URL`, com o Deploy Hook do serviço.
-O hook recebe o SHA aprovado; a conclusão do build/deploy é acompanhada no Render.
-As credenciais Oracle reais permanecem apenas no Render e no ambiente local.
-
 No backend: `.\mvnw.cmd clean verify`. Para incluir os testes Oracle, use a `.env` configurada e `$env:LEMBREI_ORACLE_TESTS='true'`. Os testes de integração desfazem seus dados por rollback.
 
-No mobile: `npm run typecheck`, `npm run lint` e `npm test`. Com o Expo executando em `localhost:8081`, `npm run test:e2e` verifica as telas com respostas de API simuladas somente nos testes. Esses testes não substituem a validação do aparelho físico e do Oracle.
+No mobile: `npm run typecheck`, `npm run lint` e `npm test`. Com o Expo executando em `localhost:8081`, `npm run test:e2e` verifica as telas com respostas de API simuladas somente nos testes. A demonstração manual utiliza o aplicativo com a API publicada e o Oracle FIAP.
 
 Roteiro manual: criar um remédio com estoque e horário já ocorrido hoje; abrir Hoje; confirmar e conferir a baixa; registrar reposição e conferir o histórico; consultar Progresso; criar um hábito para verificar o fluxo sem estoque. Use dados de demonstração e não exponha UUIDs ou credenciais na gravação.

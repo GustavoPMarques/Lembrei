@@ -1,8 +1,13 @@
 # Lembrei! - Backend API
 
+API REST publicada no Render com HTTPS e conexao ao Oracle FIAP:
+
+- [API](https://lembrei-api.onrender.com/api/v1)
+- [Swagger](https://lembrei-api.onrender.com/swagger-ui.html)
+- [OpenAPI](https://lembrei-api.onrender.com/v3/api-docs)
+
 O deploy usa Docker com Java 21. As credenciais ficam nas variaveis privadas
-do painel da hospedagem. O servidor usa PORT
-quando definida e mantem 8080 no ambiente local.
+do Render. O servidor usa PORT quando definida e mantem 8080 no ambiente local.
 
 
 API REST do aplicativo de lembretes de remedios e habitos. Sem login e senha:
@@ -80,7 +85,6 @@ java -jar target/lembrei-api-0.0.1-SNAPSHOT.jar
 
 API publicada: https://lembrei-api.onrender.com/api/v1
 Swagger publicado: https://lembrei-api.onrender.com/swagger-ui.html
-O plano gratuito pode exigir aguardar o despertar antes da primeira chamada.
 
 Base local: http://localhost:8080/api/v1
 Swagger: http://localhost:8080/swagger-ui.html
@@ -260,11 +264,10 @@ Mensagens retornadas nao incluem senha, SQL ou stack trace.
 
 ## 8. TESTES
 
-O GitHub Actions compila/testa o backend sem credenciais reais e executa os
-testes de integracao em outro job, com Oracle descartavel. Depois das verificacoes
-do mobile, Oracle e Docker, o workflow pode solicitar deploy no Render usando
-o secret RENDER_DEPLOY_HOOK_URL. Os scripts do banco FIAP nao sao atualizados
-automaticamente por esse workflow.
+O job build-test do GitHub Actions executa clean verify com Java 21 e publica
+os relatorios e o JAR. O job oracle-db executa OracleIntegrationTest em um
+Oracle Free descartavel, preparado pelos scripts de database/ci/run_ci.sh.
+As credenciais de CI sao temporarias e independentes do Oracle FIAP.
 
 Sem Oracle: .\mvnw.cmd clean verify
 Testes de service/controller verificam validacoes, vinculo ao aparelho,
@@ -344,3 +347,25 @@ RuntimeException; seu getter de status e gerado com @Getter.
 No IntelliJ, mantenha o plugin Lombok instalado e o processamento de anotacoes
 ativo. Depois de alterar o pom.xml, execute Reload All Maven Projects. A
 compilacao com mvnw funciona sem depender do plugin da IDE.
+
+## 12. PUBLICACAO E CI/CD
+
+O workflow [ci-cd.yml](../../.github/workflows/ci-cd.yml) executa em push e pull
+request para main e permite execucao manual. Os jobs build-test, mobile-test e
+oracle-db executam em paralelo. docker-build constroi a imagem quando esses
+tres jobs passam. O job deploy solicita a publicacao em push na main ou
+execucao manual nessa branch, depois de todas as verificacoes aprovadas.
+
+O disparo usa Bash e curl no proprio YAML, com RENDER_DEPLOY_HOOK_URL vindo
+dos secrets do GitHub. A requisicao envia o SHA aprovado no parametro ref.
+O Render mantem Auto-Deploy desligado e constroi esse commit usando o Dockerfile.
+O Actions registra a solicitacao; o painel do Render registra a conclusao Live.
+
+O Dockerfile compila com JDK 21 e executa o JAR com Java 21 em usuario sem
+privilegios de root. A .dockerignore seleciona os arquivos de build e exclui
+configuracoes privadas. ORACLE_URL, ORACLE_USER e ORACLE_PASSWORD sao definidos
+no Render. O health check usa /v3/api-docs.
+
+Artefatos por sete dias: testes-backend, testes-oracle e lembrei-api-jar.
+O fluxo completo foi aprovado no GitHub Actions. O banco utilizado pela API
+publicada continua sendo o Oracle FIAP.
