@@ -17,6 +17,9 @@ web-build/
 test-results/
 playwright-report/
 coverage/
+ci-logs/
+__pycache__/
+*.pyc
 *.log
 *.pem
 *.key

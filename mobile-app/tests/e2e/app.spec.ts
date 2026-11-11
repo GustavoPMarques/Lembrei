@@ -129,6 +129,28 @@ test('UUID persiste, ajustes de nome funcionam e notificações foram removidas'
   await expect(page.getByText('Abrir permissões do celular')).toHaveCount(0);
 });
 
+test('URL configurada substitui IP antigo uma vez e preserva ajustes posteriores', async ({ page }) => {
+  await mockApi(page);
+  await page.addInitScript(() => {
+    if (!localStorage.getItem('lembrei.test-connection-seeded')) {
+      localStorage.setItem('lembrei.api-url', 'http://192.168.1.99:8080/api/v1');
+      localStorage.removeItem('lembrei.configured-api-url');
+      localStorage.setItem('lembrei.test-connection-seeded', 'true');
+    }
+  });
+  await page.goto('/');
+  await expect(page.getByText('Um cuidado de cada vez.', { exact: true })).toBeVisible();
+  const configured = await page.evaluate(() => localStorage.getItem('lembrei.configured-api-url'));
+  expect(configured).toBeTruthy();
+  await page.getByLabel('Abrir ajustes').click();
+  await expect(page.getByLabel('Endereço do servidor', { exact: true })).toHaveValue(configured!);
+  await page.getByLabel('Endereço do servidor', { exact: true }).fill('http://localhost:9090/api/v1');
+  await page.getByRole('button', { name: 'Salvar e conectar', exact: true }).click();
+  await expect(page.getByText('Configuração salva. Confira o estado da conexão acima.', { exact: true })).toBeVisible();
+  await page.reload();
+  await expect(page.getByLabel('Endereço do servidor', { exact: true })).toHaveValue('http://localhost:9090/api/v1');
+});
+
 test('erro de estoque não confirma a dose nem apresenta sucesso', async ({ page }) => {
   await mockApi(page, true);
   await createCare(page);

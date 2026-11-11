@@ -78,6 +78,10 @@ ou variaveis Oracle no processo:
 java -jar target/lembrei-api-0.0.1-SNAPSHOT.jar
 ```
 
+API publicada: https://lembrei-api.onrender.com/api/v1
+Swagger publicado: https://lembrei-api.onrender.com/swagger-ui.html
+O plano gratuito pode exigir aguardar o despertar antes da primeira chamada.
+
 Base local: http://localhost:8080/api/v1
 Swagger: http://localhost:8080/swagger-ui.html
 Contrato OpenAPI JSON: http://localhost:8080/v3/api-docs
@@ -255,6 +259,12 @@ Mensagens retornadas nao incluem senha, SQL ou stack trace.
 - Intervalos de geracao limitados e inclusao idempotente evitam duplicatas.
 
 ## 8. TESTES
+
+O GitHub Actions compila/testa o backend sem credenciais reais e executa os
+testes de integracao em outro job, com Oracle descartavel. Depois das verificacoes
+do mobile, Oracle e Docker, o workflow pode solicitar deploy no Render usando
+o secret RENDER_DEPLOY_HOOK_URL. Os scripts do banco FIAP nao sao atualizados
+automaticamente por esse workflow.
 
 Sem Oracle: .\mvnw.cmd clean verify
 Testes de service/controller verificam validacoes, vinculo ao aparelho,

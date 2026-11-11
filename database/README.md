@@ -252,6 +252,11 @@ SQL dinamico. Sao recursos com funcao concreta nas regras do projeto.
 
 ## Transacoes, seguranca e automacao
 
+No GitHub Actions, `ci/run_ci.sh` cria um Oracle Free descartavel, com senha
+temporaria gerada a cada execucao, e instala 01, 03, 04 e 05. Depois executa
+06 e os testes Java de integracao. A carga de exemplo 02 nao e necessaria.
+O container e removido no fim. Esse fluxo nao acessa nem altera o Oracle FIAP.
+
 As procedures de escrita nao executam COMMIT: a API controla a transacao com
 `@Transactional`. Os savepoints permitem desfazer as alteracoes de uma operacao
 que falhou. Os bloqueios `FOR UPDATE` protegem geracao/estoque concorrentes.

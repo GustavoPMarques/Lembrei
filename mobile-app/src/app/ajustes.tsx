@@ -33,9 +33,10 @@ export default function SettingsScreen() {
     <View style={ui.card}><View style={ui.between}><Text style={ui.heading}>Conexão</Text><Badge tone={status === 'ready' ? 'green' : 'amber'}>{status === 'ready' ? 'Conectado' : status === 'loading' ? 'Conectando' : 'Sem conexão'}</Badge></View>
       <Notice text={status === 'error' ? error : ''} />
       <Field label="Endereço do servidor" value={url} onChangeText={setUrl} autoCapitalize="none" autoCorrect={false} keyboardType="url" editable={!busy}
-        placeholder="http://IP-DO-COMPUTADOR:8080/api/v1" hint="No celular, detectamos o computador pelo Expo. Altere se a API estiver em outra máquina. Na web local, use localhost." />
+        placeholder="https://lembrei-api.onrender.com/api/v1" hint="O app usa um serviço online para acessar seus cuidados. Altere este endereço apenas se precisar usar outro servidor." />
       <Button variant="secondary" icon="refresh-outline" loading={busy === 'connection'} disabled={!!busy}
         onPress={() => void run('connection', () => saveConnection(url), 'Configuração salva. Confira o estado da conexão acima.')}>Salvar e conectar</Button>
+      <Text style={ui.muted}>Após um tempo sem uso, o serviço pode demorar para responder. Aguarde um pouco e tente conectar novamente.</Text>
       <Text style={ui.muted}>Fuso dos cuidados: São Paulo (UTC−3).</Text>
     </View>
     <View style={ui.card}><View style={[ui.row, { gap: 10 }]}><Icon name="shield-checkmark-outline" /><Text style={ui.heading}>Sobre seus dados</Text></View>

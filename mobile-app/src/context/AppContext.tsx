@@ -48,7 +48,16 @@ export function AppProvider({ children }: { children: ReactNode }) {
       if (controller.signal.aborted) return;
       setStatus('loading');
       setError('');
-      const url = normalizeApiUrl(customUrl ?? await AsyncStorage.getItem('lembrei.api-url') ?? defaultUrl());
+      const configuredUrl = process.env.EXPO_PUBLIC_API_URL?.trim();
+      let savedUrl = await AsyncStorage.getItem('lembrei.api-url');
+      if (configuredUrl && await AsyncStorage.getItem('lembrei.configured-api-url') !== configuredUrl) {
+        savedUrl = normalizeApiUrl(configuredUrl);
+        await AsyncStorage.multiSet([
+          ['lembrei.api-url', savedUrl],
+          ['lembrei.configured-api-url', configuredUrl],
+        ]);
+      }
+      const url = normalizeApiUrl(customUrl ?? savedUrl ?? defaultUrl());
       setUuid(device);
       setBaseUrl(url);
       const client = new ApiClient(url, device);

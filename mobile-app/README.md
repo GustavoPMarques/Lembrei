@@ -26,7 +26,10 @@ Use uma versao compativel; npm ci instala as versoes do package-lock.json.
 No Android, use Expo Go compativel com SDK 57. O fluxo iOS tem componentes
 especificos, mas nao foi validado neste projeto em aparelho iOS.
 
-Mantenha a API Spring Boot executando no IntelliJ e o Oracle acessivel.
+A API publicada e https://lembrei-api.onrender.com/api/v1. Nao e necessario
+executar o backend localmente para usar esse endereco. O Oracle deve estar
+acessivel pelo servico do Render. A primeira requisicao pode demorar apos
+inatividade do plano gratuito; aguarde a API iniciar e tente novamente.
 Em um PowerShell, partindo da raiz do repositorio:
 
 ```powershell
@@ -61,8 +64,9 @@ npm start
 
 ## 3. ENDERECO DA API
 
-No navegador, o padrao e http://localhost:8080/api/v1.
-No Expo Go, o app tenta usar o host do servidor Expo, na porta 8080.
+A .env.example aponta para https://lembrei-api.onrender.com/api/v1, tanto
+no navegador quanto no Expo Go. Com EXPO_PUBLIC_API_URL vazia, a alternativa
+local usa localhost:8080 na web e o host do Expo na porta 8080 no celular.
 Nao existe IP pessoal fixo no codigo. Cada pessoa usa seu proprio computador.
 
 Em Ajustes > Conexao, e possivel salvar outro endereco sem alterar codigo:
@@ -72,15 +76,18 @@ Em Ajustes > Conexao, e possivel salvar outro endereco sem alterar codigo:
 Alternativa: copie .env.example para .env, ajuste EXPO_PUBLIC_API_URL e
 reinicie o Expo. Deixe vazia para deteccao automatica. Com tunnel, configure
 o endereco acessivel da API separadamente. Essa variavel e publica: nunca coloque senhas Oracle nela.
-Um endereco salvo nos ajustes tem prioridade sobre o valor inicial do ambiente.
+Quando EXPO_PUBLIC_API_URL muda, o app atualiza o endereco salvo uma unica vez,
+inclusive em instalacoes que usavam IP local. Depois disso, Ajustes permite
+personalizar o endereco ate a proxima mudanca da configuracao do ambiente.
 Use .env para sua configuracao privada; o Git ignora .env e suas variantes,
 exceto modelos .env.example. EXPO_PUBLIC_API_URL entra no bundle do aplicativo:
 nao e segredo. Nunca coloque senhas ou chaves privadas no app ou em EXPO_PUBLIC_*.
 Veja ../SEGURANCA.txt antes de publicar ou compartilhar uma copia do projeto.
 
 No celular, localhost aponta ao proprio celular, nao ao computador.
-Se nao conectar, confira se API e Expo estao ligados, se o IP e o correto e
-se a rede/firewall permite acessar as portas 8080 (API) e 8081 (Expo).
+Com Render, confira a URL HTTPS, a conexao com a internet e se o servico ja
+despertou. Somente no modo local, confira API/Expo ligados, IP correto e
+acesso de rede as portas 8080 (API) e 8081 (Expo).
 
 O CORS da API ja permite http://localhost:8081. Se abrir a versao web por um
 endereco LAN ou outra origem, acrescente essa origem em CORS_ORIGINS na
@@ -274,7 +281,8 @@ itemPayload valida o formulario e monta o JSON; nao envia estoqueInicial em
 edicoes nem para habitos. positiveInteger valida quantidade inteira e limite.
 normalizeApiUrl aceita HTTP/HTTPS e rejeita credenciais, query e fragmentos.
 resolveApiUrl prioriza EXPO_PUBLIC_API_URL, depois usa localhost na web ou o
-host do Expo no celular. A preferencia salva em Ajustes e aplicada antes disso.
+host do Expo no celular. Quando a URL de ambiente muda, AppProvider atualiza a preferencia uma vez;
+sem nova mudanca, a preferencia de Ajustes tem prioridade.
 
 today obtem a data em Sao Paulo; addDays desloca datas; monday encontra o inicio
 ISO da semana; localInstant interpreta instante local UTC-3; formatDay e

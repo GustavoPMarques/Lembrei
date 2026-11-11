@@ -60,6 +60,8 @@ As entidades e regras representam o cadastro de cuidados, a agenda, as confirma�
 
 ## Executar a partir de uma cópia do repositório
 
+Para testar somente o aplicativo com a API publicada, siga diretamente a etapa 3. As etapas 1 e 2 servem para executar seu próprio backend localmente.
+
 Requisitos: JDK 21, Node.js compatível com o SDK 57 (consulte o README mobile), npm, acesso ao Oracle e um cliente como SQL Developer. Para testar no Android, use Expo Go compatível com SDK 57 e a mesma rede local do computador. Não é necessário alterar permanentemente o Java do sistema.
 
 ### 1. Preparar o Oracle
@@ -94,9 +96,9 @@ npm ci
 npm start
 ```
 
-Deixe `EXPO_PUBLIC_API_URL` vazia para detecção automática: host do Expo no celular e `localhost:8080/api/v1` na web local. Para outra API, preencha a URL completa. Um endereço salvo em Ajustes tem prioridade sobre a `.env`.
+O modelo `.env.example` aponta para `https://lembrei-api.onrender.com/api/v1`, usada no Android e na web. Quando essa variável muda, o app atualiza o endereço salvo uma vez, evitando manter um IP local antigo. Depois disso, Ajustes permite personalizar a conexão até a próxima mudança da variável. Para usar uma API local, informe a URL ou deixe a variável vazia para detectar o host do Expo no celular e usar `localhost:8080/api/v1` na web.
 
-Abra o QR Code no Expo Go ou pressione `w` para abrir `http://localhost:8081`. API e Expo precisam estar executando; o Oracle precisa estar acessível. No celular, `localhost` representa o próprio aparelho. O túnel do Expo não publica a API automaticamente.
+Abra o QR Code no Expo Go ou pressione `w` para abrir `http://localhost:8081`. O Expo precisa estar executando para esse teste. Com a URL do Render, a API local pode ficar desligada; o Oracle precisa estar acessível pelo serviço publicado. No celular, `localhost` representa o próprio aparelho. O túnel do Expo não publica uma API local automaticamente.
 
 Comandos Linux/macOS equivalentes usam `cp` e `./mvnw`; configure o JDK 21 na sessão. As instruções de rede e as credenciais são próprias de cada computador.
 
@@ -107,6 +109,14 @@ O mobile usa `FlatList`, consultas paginadas, cancelamento com `AbortController`
 A interface oferece botões amplos, rótulos acessíveis, status descritos em texto, fontes que acompanham a escala do sistema, tratamento do teclado e seletor nativo de horário. São decisões implementadas; não representam certificação de acessibilidade nem estudo de usabilidade com o público-alvo.
 
 ## Verificações e demonstração
+
+O workflow `.github/workflows/ci-cd.yml` verifica o backend, o mobile, os scripts
+SQL em Oracle descartável e a imagem Docker. Pull requests executam as
+validações; push na `main` e execução manual nessa branch podem solicitar o
+deploy após todas elas passarem. O Render deve ficar com Auto-Deploy desligado.
+O único secret exigido é `RENDER_DEPLOY_HOOK_URL`, com o Deploy Hook do serviço.
+O hook recebe o SHA aprovado; a conclusão do build/deploy é acompanhada no Render.
+As credenciais Oracle reais permanecem apenas no Render e no ambiente local.
 
 No backend: `.\mvnw.cmd clean verify`. Para incluir os testes Oracle, use a `.env` configurada e `$env:LEMBREI_ORACLE_TESTS='true'`. Os testes de integração desfazem seus dados por rollback.
 
