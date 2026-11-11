@@ -1,0 +1,35 @@
+CONFIGURACOES PRIVADAS DO LEMBREI!
+
+backend-api/lembrei-api/.env guarda as credenciais Oracle somente neste
+computador. O application.properties importa esse arquivo fora do JAR, usando
+o diretorio de trabalho. Variaveis de ambiente do processo tem prioridade.
+O arquivo usa sintaxe Java Properties, sem export ou aspas envolvendo valores.
+
+mobile-app/.env deve conter somente EXPO_PUBLIC_API_URL. A URL e publica.
+Nunca coloque senha Oracle, chave privada ou credencial de servidor no mobile,
+em app.json, assets ou variaveis EXPO_PUBLIC_*. O app distribuido pode ser lido.
+
+Os .gitignore da raiz e dos projetos excluem configuracoes locais, arquivos de
+IDE, chaves privadas, certificados privados, logs e artefatos de compilacao.
+Os modelos .env.example sao publicos e devem ter somente exemplos.
+Nao use git add -f para arquivos privados. Antes de cada publicacao, confira:
+
+  git status --short
+  git diff --cached --name-only
+
+Um .gitignore nao remove arquivos ja versionados nem apaga o historico.
+Se uma credencial ja tiver sido publicada, revogue ou troque essa credencial;
+remover o arquivo do ultimo commit nao invalida copias anteriores.
+Nao envie a pasta completa em ZIP: arquivos ignorados pelo Git continuam no
+disco. Compartilhe somente arquivos versionados, sem logs, .env e .idea.
+
+O arquivo .env nao e criptografado. Quem tem acesso ao computador e ao
+arquivo pode le-lo. Nao o inclua em capturas de tela ou gravacoes de demonstracao.
+
+O UUID da instalacao permite acessar os dados vinculados a ele. O projeto nao
+possui autenticacao de conta: mantenha o UUID privado e nao o exponha em videos.
+Na web ele fica no armazenamento local; no celular, no SecureStore.
+HTTP e permitido para testes na rede local. Antes de publicar o servico, configure
+HTTPS e revise autenticacao, limites de acesso e origens CORS permitidas.
+Estas configuracoes protegem contra publicacao acidental de arquivos privados;
+nao constituem garantia absoluta de ausencia de vulnerabilidades.

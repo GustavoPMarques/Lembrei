@@ -1,0 +1,103 @@
+@baseUrl = http://localhost:8080/api/v1
+@uuid = 123e4567-e89b-42d3-a456-426614174000
+@itemId = 1
+@registroId = 1
+
+### Identificacao automatica (use UUID novo para um aparelho novo)
+POST {{baseUrl}}/usuarios/identificar
+Content-Type: application/json
+
+{"uuidDispositivo":"{{uuid}}","nome":"Maria"}
+
+### Perfil do aparelho
+GET {{baseUrl}}/usuarios/me
+X-Dispositivo-Id: {{uuid}}
+
+### Atualizar nome
+PUT {{baseUrl}}/usuarios/me
+X-Dispositivo-Id: {{uuid}}
+Content-Type: application/json
+
+{"nome":"Maria Silva"}
+
+### Criar remedio; copie idItem da resposta para itemId acima
+POST {{baseUrl}}/itens
+X-Dispositivo-Id: {{uuid}}
+Content-Type: application/json
+
+{"tipo":"REMEDIO","nome":"Remedio demonstrativo","dose":"1 comprimido","qtdPorDose":1,"estoqueInicial":10,"diasSemana":"1111111","horarios":["08:00","20:00"]}
+
+### Criar habito
+POST {{baseUrl}}/itens
+X-Dispositivo-Id: {{uuid}}
+Content-Type: application/json
+
+{"tipo":"HABITO","nome":"Beber agua","qtdPorDose":1,"diasSemana":"1111111","horarios":["12:00"]}
+
+### Listar ativos
+GET {{baseUrl}}/itens?ativo=true&pagina=0&tamanho=20
+X-Dispositivo-Id: {{uuid}}
+
+### Consultar item
+GET {{baseUrl}}/itens/{{itemId}}
+X-Dispositivo-Id: {{uuid}}
+
+### Editar mantendo os horarios com ocorrencias e omitindo estoqueInicial
+PUT {{baseUrl}}/itens/{{itemId}}
+X-Dispositivo-Id: {{uuid}}
+Content-Type: application/json
+
+{"tipo":"REMEDIO","nome":"Remedio demonstrativo editado","dose":"1 comprimido","qtdPorDose":1,"diasSemana":"1111111","horarios":["08:00","20:00"]}
+
+### Rotina de hoje; copie idRegistro da resposta para registroId acima
+GET {{baseUrl}}/rotina?pagina=0&tamanho=100
+X-Dispositivo-Id: {{uuid}}
+
+### Gerar intervalo (ajuste as datas)
+POST {{baseUrl}}/rotina/gerar
+X-Dispositivo-Id: {{uuid}}
+Content-Type: application/json
+
+{"inicio":"2026-11-09","fim":"2026-11-15"}
+
+### Consultar ocorrencia
+GET {{baseUrl}}/registros/{{registroId}}
+X-Dispositivo-Id: {{uuid}}
+
+### Confirmar no instante atual; somente depois do horario previsto
+POST {{baseUrl}}/registros/{{registroId}}/confirmar
+X-Dispositivo-Id: {{uuid}}
+
+### Marcar como esquecida (nao e permitido se ja estiver TOMADO)
+POST {{baseUrl}}/registros/{{registroId}}/esquecer
+X-Dispositivo-Id: {{uuid}}
+
+### Saldo e previsao
+GET {{baseUrl}}/itens/{{itemId}}/estoque
+X-Dispositivo-Id: {{uuid}}
+
+### Repor estoque - cada execucao soma novamente
+POST {{baseUrl}}/itens/{{itemId}}/reposicoes
+X-Dispositivo-Id: {{uuid}}
+Content-Type: application/json
+
+{"quantidade":10}
+
+### Historico de estoque
+GET {{baseUrl}}/itens/{{itemId}}/movimentos?pagina=0&tamanho=20
+X-Dispositivo-Id: {{uuid}}
+
+### Alertas
+GET {{baseUrl}}/alertas/estoque
+X-Dispositivo-Id: {{uuid}}
+
+### Relatorio da semana atual
+GET {{baseUrl}}/relatorios/semanal
+X-Dispositivo-Id: {{uuid}}
+
+### Desativar sem excluir historico
+PATCH {{baseUrl}}/itens/{{itemId}}/ativo
+X-Dispositivo-Id: {{uuid}}
+Content-Type: application/json
+
+{"ativo":false}

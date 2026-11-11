@@ -1,0 +1,42 @@
+{
+  "expo": {
+    "name": "Lembrei!",
+    "slug": "lembrei-app",
+    "scheme": "lembrei",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/lembrei-icon.png",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#F7F8F4",
+        "foregroundImage": "./assets/lembrei-icon.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "single",
+      "favicon": "./assets/lembrei-favicon.png"
+    },
+    "plugins": [
+      "expo-status-bar",
+      "expo-router",
+      "expo-secure-store",
+      "expo-font",
+      "expo-splash-screen",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "usesCleartextTraffic": true
+          }
+        }
+      ],
+      "@react-native-community/datetimepicker"
+    ]
+  }
+}
