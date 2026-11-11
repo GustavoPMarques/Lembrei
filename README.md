@@ -113,15 +113,3 @@ No backend: `.\mvnw.cmd clean verify`. Para incluir os testes Oracle, use a `.en
 No mobile: `npm run typecheck`, `npm run lint` e `npm test`. Com o Expo executando em `localhost:8081`, `npm run test:e2e` verifica as telas com respostas de API simuladas somente nos testes. Esses testes não substituem a validação do aparelho físico e do Oracle.
 
 Roteiro manual: criar um remédio com estoque e horário já ocorrido hoje; abrir Hoje; confirmar e conferir a baixa; registrar reposição e conferir o histórico; consultar Progresso; criar um hábito para verificar o fluxo sem estoque. Use dados de demonstração e não exponha UUIDs ou credenciais na gravação.
-
-## Limitações e entrega
-
-- A versão atual apresenta a agenda dentro do app; não envia notificações do sistema e não solicita essa permissão.
-- Não há funcionamento offline para operações de negócio, autenticação de conta ou recuperação de identidade. Android e web têm UUIDs e dados separados.
-- A previsão de estoque presume cumprimento integral da agenda atual e ausência de novas reposições. Não desconta pendências antigas.
-- O histórico não reconstrói versões antigas de nome, dose ou agenda. Horários com ocorrências possuem restrições de edição para preservar registros.
-- O backend ainda é executado localmente. HTTPS, autenticação adequada para exposição pública e hospedagem precisam ser tratados antes de disponibilização pública do serviço.
-
-A documentação cobre os requisitos técnicos do projeto. Os vídeos e seus links devem ser preparados pela equipe; não há links fictícios de entrega. Após criar o repositório, inclua sua URL em um arquivo `.txt` e compartilhe o acesso com o tutor. Confirme os entregáveis no enunciado e respeite o prazo de 19/11/2026.
-
-Para publicar como um único repositório, a raiz deve incluir `backend-api`, `database` e `mobile-app`. Verifique se há um `.git` dentro de alguma dessas pastas antes de adicioná-las: um repositório interno pode ser registrado como submódulo sem que seu código acompanhe o clone principal. Preserve o histórico necessário e resolva essa organização antes do primeiro envio. Os arquivos `.env` devem permanecer locais; somente `.env.example` acompanha o código.
