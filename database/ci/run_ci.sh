@@ -11,8 +11,14 @@ docker run -d --name lembrei-oracle-ci \
 
 oracle_ready=false
 for attempt in $(seq 1 60); do
-  health="$(docker inspect --format '{{.State.Health.Status}}' lembrei-oracle-ci)"
-  if [ "$health" = healthy ]; then
+  if readiness_output="$(
+    {
+      printf 'SET ECHO OFF\nSET VERIFY OFF\nSET DEFINE OFF\nSET HEADING OFF\nSET FEEDBACK OFF\nSET PAGESIZE 0\n'
+      printf 'WHENEVER OSERROR EXIT FAILURE\nWHENEVER SQLERROR EXIT FAILURE\n'
+      printf 'CONNECT lembrei_ci/"%s"@//localhost:1521/FREEPDB1\n' "$ORACLE_CI_PASSWORD"
+      printf "SELECT 'ORACLE_PRONTO' FROM dual;\nEXIT SUCCESS\n"
+    } | docker exec -i lembrei-oracle-ci sqlplus -L -S /nolog 2>&1
+  )" && grep -q '^[[:space:]]*ORACLE_PRONTO[[:space:]]*$' <<< "$readiness_output"; then
     oracle_ready=true
     break
   fi
