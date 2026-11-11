@@ -98,8 +98,7 @@ a carga de exemplo inclui apenas os cadastros e horarios.
 
 ## Procedures, packages e triggers
 
-Os arquivos 03, 04 e 05 seguem a organizacao dos scripts `04_procedures.sql`,
-`05_packages.sql` e `06_triggers.sql` do SmartHas, com `CREATE OR REPLACE`, parametros `%TYPE`,
+Os arquivos 03, 04 e 05 usam `CREATE OR REPLACE`, parametros `%TYPE`,
 erros de negocio e consultas de verificacao. Podem ser reinstalados sem
 apagar dados. Instale os tres antes de confirmar doses. A instalacao requer
 permissoes `CREATE PROCEDURE` e `CREATE TRIGGER`.
@@ -152,7 +151,7 @@ centralizados no arquivo `lembrei_06_testes.sql`.
 ## Packages
 
 O arquivo `lembrei_04_packages.sql` cria specification e body para tres packages,
-seguindo a divisao do SmartHas:
+divididos em calculo, operacao e relatorio:
 
 | Package | Rotinas publicas |
 | --- | --- |
@@ -246,7 +245,7 @@ restricoes e indices permanecem iguais. Nenhum dado precisa ser apagado.
 Para atualizar somente regras PL/SQL, execute os arquivos 03, 04 e 05 com F5,
 nessa ordem, e depois 06 para verificar. Nao repita o DDL nem a carga de exemplo.
 
-A organizacao segue o SmartHas: DDL direto, carga separada, procedures,
+A organizacao inclui DDL direto, carga separada, procedures,
 packages divididos por responsabilidade, triggers e testes. Mantemos bloqueios
 FOR UPDATE para proteger o estoque em operacoes simultaneas e validacao do
 SQL dinamico. Sao recursos com funcao concreta nas regras do projeto.

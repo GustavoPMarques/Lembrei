@@ -36,10 +36,3 @@ npm test. Com Expo ligado: npm run test:e2e. Banco: script 06 com F5.
 O app nao exige login; identifica a instalacao por UUID. Agenda e visual,
 sem notificacoes do sistema. O backend depende do Oracle e nao esta hospedado.
 Detalhes e limites estao nos READMEs dos componentes.
-
-ENTREGA
-Publique somente arquivos apropriados ao Git, sem .env, .idea, logs e chaves.
-Depois de criar o repositorio, entregue sua URL em TXT e compartilhe com o
-tutor. Videos e links devem ser incluidos pela equipe conforme o enunciado.
-Prazo informado: 19/11/2026. Referencia de organizacao:
-https://github.com/GustavoPMarques/SmartHas

@@ -45,7 +45,7 @@ flowchart TD
 | Oracle PL/SQL | Automação de geração da rotina, confirmação, estoque e relatórios. |
 | Swagger / OpenAPI | Consulta e teste dos contratos HTTP. |
 
-O [SmartHas](https://github.com/GustavoPMarques/SmartHas) foi utilizado como referência de organização. As entidades e regras foram adaptadas ao problema de cuidados diários.
+As entidades e regras representam o cadastro de cuidados, a agenda, as confirmações e os movimentos de estoque.
 
 ## Organização da documentação
 

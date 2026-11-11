@@ -1,5 +1,9 @@
 # Lembrei! - Backend API
 
+O deploy usa Docker com Java 21. As credenciais ficam nas variaveis privadas
+do painel da hospedagem. O servidor usa PORT
+quando definida e mantem 8080 no ambiente local.
+
 
 API REST do aplicativo de lembretes de remedios e habitos. Sem login e senha:
 um UUID persistido pelo app identifica a instalacao e vincula os seus dados.
@@ -7,11 +11,10 @@ Funcionalidades: agenda e rotina, registro de adesao, controle de estoque com
 previsao de reposicao e relatorio semanal. A proposta se relaciona ao ODS 3,
 Saude e Bem-Estar, ao apoiar a organizacao da rotina de cuidados.
 
-## 1. TECNOLOGIAS E REFERENCIA
+## 1. TECNOLOGIAS
 
 Java 21, Spring Boot 4.1.2, Maven Wrapper, Spring MVC, Bean Validation,
 Spring JDBC/JdbcTemplate, Oracle JDBC, Lombok e springdoc-openapi 3.1.0.
-Referencia: https://github.com/GustavoPMarques/SmartHas
 Foi mantida a separacao Controller -> Service -> Repository, DTOs e tratamento
 centralizado de erros. As regras de estoque e adesao usam o Oracle existente.
 O projeto nao utiliza Firebase, JPA ou templates HTML.
@@ -284,7 +287,7 @@ docs/requisicoes.http: exemplos para o HTTP Client do IntelliJ e clientes compat
 
 ## 10. ORGANIZACAO DAS CAMADAS
 
-A estrutura segue a separacao do SmartHas: controller, service, repository,
+A estrutura separa controller, service, repository,
 dto, model, config e exception. Foi mantido JDBC para Oracle. Cada dominio
 possui um controller, um service e um repository, com injecao por construtor.
 
