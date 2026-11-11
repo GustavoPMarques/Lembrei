@@ -1,5 +1,5 @@
-LEMBREI! - BACKEND API
-=====================
+# Lembrei! - Backend API
+
 
 API REST do aplicativo de lembretes de remedios e habitos. Sem login e senha:
 um UUID persistido pelo app identifica a instalacao e vincula os seus dados.
@@ -7,7 +7,7 @@ Funcionalidades: agenda e rotina, registro de adesao, controle de estoque com
 previsao de reposicao e relatorio semanal. A proposta se relaciona ao ODS 3,
 Saude e Bem-Estar, ao apoiar a organizacao da rotina de cuidados.
 
-1. TECNOLOGIAS E REFERENCIA
+## 1. TECNOLOGIAS E REFERENCIA
 
 Java 21, Spring Boot 4.1.2, Maven Wrapper, Spring MVC, Bean Validation,
 Spring JDBC/JdbcTemplate, Oracle JDBC, Lombok e springdoc-openapi 3.1.0.
@@ -20,7 +20,7 @@ DTOs convencionais usam Lombok para gerar construtores, getters e setters. JDBC 
 parametrizado e chamadas aos packages PL/SQL sem duplicar regras do banco.
 Swagger permite testar o backend antes de implementar o aplicativo.
 
-2. PRE-REQUISITOS E EXECUCAO
+## 2. PRE-REQUISITOS E EXECUCAO
 
 - JDK 21 configurado na IDE ou na sessao de terminal; nao precisa ser global.
 - Acesso de rede ao Oracle e credenciais do schema correto.
@@ -33,9 +33,11 @@ com Maven 3.10, use Bundled Maven 3.9.x na IDE. O Wrapper funciona no terminal.
 
 Na configuracao de execucao de LembreiApiApplication, defina:
 
-  ORACLE_URL=jdbc:oracle:thin:@oracle.fiap.com.br:1521:ORCL
-  ORACLE_USER=seu_usuario
-  ORACLE_PASSWORD=sua_senha
+```properties
+ORACLE_URL=jdbc:oracle:thin:@oracle.fiap.com.br:1521:ORCL
+ORACLE_USER=seu_usuario
+ORACLE_PASSWORD=sua_senha
+```
 
 Para configurar por arquivo, copie .env.example para .env na pasta do
 pom.xml somente na primeira execucao e preencha suas credenciais.
@@ -54,27 +56,33 @@ a API registra uma mensagem e continua; operacoes dependentes retornam 503.
 
 Alternativa PowerShell, com a .env preenchida ou variaveis Oracle na sessao:
 
-  $env:JAVA_HOME = 'C:\caminho\para\jdk-21'
-  $env:Path = "$env:JAVA_HOME\bin;$env:Path"
-  .\mvnw.cmd spring-boot:run
+```powershell
+$env:JAVA_HOME = 'C:\caminho\para\jdk-21'
+$env:Path = "$env:JAVA_HOME\bin;$env:Path"
+.\mvnw.cmd spring-boot:run
+```
 
 Compilar e testar sem Oracle:
 
-  .\mvnw.cmd clean verify
+```powershell
+.\mvnw.cmd clean verify
+```
 
 Executar o artefato compilado, na pasta do pom.xml, com a .env preenchida
 ou variaveis Oracle no processo:
 
-  java -jar target/lembrei-api-0.0.1-SNAPSHOT.jar
+```powershell
+java -jar target/lembrei-api-0.0.1-SNAPSHOT.jar
+```
 
 Base local: http://localhost:8080/api/v1
 Swagger: http://localhost:8080/swagger-ui.html
 Contrato OpenAPI JSON: http://localhost:8080/v3/api-docs
 
-3. PRIMEIRO TESTE NO SWAGGER
+## 3. PRIMEIRO TESTE NO SWAGGER
 
 1) Execute POST /api/v1/usuarios/identificar com UUID v4 novo e nome:
-   {"uuidDispositivo":"123e4567-e89b-42d3-a456-426614174000","nome":"Maria"}
+   `{"uuidDispositivo":"123e4567-e89b-42d3-a456-426614174000","nome":"Maria"}`
    Retorna 201 se criado ou 200 se existente. Nao altera nome ao identificar
    novamente; use PUT /usuarios/me para isso.
 2) Clique em Authorize e informe somente esse UUID. O Swagger envia o
@@ -91,10 +99,11 @@ Contrato OpenAPI JSON: http://localhost:8080/v3/api-docs
    podem ser confirmados. A confirmacao atualiza o estoque pela trigger.
 6) Consulte estoque, movimentos, alertas e relatorio semanal.
 
-4. ENDPOINTS
+## 4. ENDPOINTS
 
 Todos abaixo usam /api/v1. Exceto identificar, exigem X-Dispositivo-Id UUID.
 
+```text
 POST  /usuarios/identificar              Criar ou recuperar por UUID
 GET   /usuarios/me                       Consultar usuario do aparelho
 PUT   /usuarios/me                       Atualizar nome: {"nome":"Maria"}
@@ -113,13 +122,16 @@ POST  /itens/{id}/reposicoes              {"quantidade":10}
 GET   /itens/{id}/movimentos              Historico de estoque
 GET   /alertas/estoque                    Remedios ativos com falta em ate 3 dias
 GET   /relatorios/semanal?data=2026-11-11  Adesao na semana ISO dessa data
+```
 
 Listas de itens, rotina, movimentos e alertas aceitam pagina (padrao 0) e
 tamanho (padrao 20, maximo 100). Pagina maxima: 100000. Exemplo de envelope:
+```json
 {"conteudo":[],"pagina":0,"tamanho":20,"temProxima":false}
+```
 O relatorio retorna inicioSemana, fimSemana e itens agregados por item.
 
-5. REGRAS E CONTRATO PARA O EXPO
+## 5. REGRAS E CONTRATO PARA O EXPO
 
 - Gere UUID v4 uma unica vez no app e persista entre aberturas. Nao use um
   UUID novo por requisicao. O backend nao recebe um idUsuario arbitrario.
@@ -162,10 +174,12 @@ O relatorio retorna inicioSemana, fimSemana e itens agregados por item.
   responsabilidades do Expo. A API retorna os horarios para exibicao da rotina.
   O app atual nao agenda notificacoes do sistema nem pede essa permissao.
 - CORS para Expo Web: localhost:8081 e localhost:19006. Personalize com
-  CORS_ORIGINS (origens separadas por virgula). Apps nativos nao usam CORS.
+```powershell
+CORS_ORIGINS (origens separadas por virgula). Apps nativos nao usam CORS.
+```
   Aparelho fisico usa o IP LAN do computador; emulador Android usa 10.0.2.2.
 
-6. CLASSES, METODOS E INTEGRACAO ORACLE
+## 6. CLASSES, METODOS E INTEGRACAO ORACLE
 
 LembreiApiApplication: ponto de entrada Spring Boot.
 config/OracleConnectionCheck: run executa SELECT 1 FROM DUAL e imprime status.
@@ -223,7 +237,7 @@ Erros: 400 para formato/validacao, 404 para recurso ausente nesse aparelho,
 503 para falha no acesso Oracle e 500 para falha interna inesperada.
 Mensagens retornadas nao incluem senha, SQL ou stack trace.
 
-7. MEMORIA E EFICIENCIA
+## 7. MEMORIA E EFICIENCIA
 
 - Pool Hikari limitado a 5 conexoes, com minimo ocioso 1 e timeouts de rede,
   consulta e aquisicao configurados.
@@ -237,7 +251,7 @@ Mensagens retornadas nao incluem senha, SQL ou stack trace.
 - Estoque e adesao calculados nas rotinas existentes; SQL usa parametros bind.
 - Intervalos de geracao limitados e inclusao idempotente evitam duplicatas.
 
-8. TESTES
+## 8. TESTES
 
 Sem Oracle: .\mvnw.cmd clean verify
 Testes de service/controller verificam validacoes, vinculo ao aparelho,
@@ -247,8 +261,10 @@ sobe um servidor em porta aleatoria para validar JSON e OpenAPI sem banco.
 Para executar tambem OracleIntegrationTest, preencha a .env na pasta do pom.xml
 ou configure ORACLE_URL, ORACLE_USER e ORACLE_PASSWORD no processo de teste:
 
-  $env:LEMBREI_ORACLE_TESTS = 'true'
-  .\mvnw.cmd clean verify
+```powershell
+$env:LEMBREI_ORACLE_TESTS = 'true'
+.\mvnw.cmd clean verify
+```
 
 No IntelliJ, use a pasta do pom.xml como diretorio de trabalho dos testes para
 ler a .env. Habilite LEMBREI_ORACLE_TESTS=true na configuracao de testes;
@@ -257,7 +273,7 @@ Os testes Oracle criam UUIDs exclusivos, fazem rollback no fim de cada teste
 e verificam depois que os usuarios de teste nao permaneceram. IDs IDENTITY
 podem avancar mesmo com rollback. Nao executam DDL nem alteram os scripts.
 
-9. ARQUIVOS COMPLEMENTARES
+## 9. ARQUIVOS COMPLEMENTARES
 
 docs/requisicoes.http: exemplos para o HTTP Client do IntelliJ e clientes compativeis.
 ../../database/README.md: instalacao, regras e testes do Oracle.
@@ -266,7 +282,7 @@ docs/requisicoes.http: exemplos para o HTTP Client do IntelliJ e clientes compat
 ../../README.md: proposta CitizenTech, publico, ODS e guia integrado.
 ../../SEGURANCA.txt: credenciais, arquivos privados e publicacao no Git.
 
-10. ORGANIZACAO DAS CAMADAS
+## 10. ORGANIZACAO DAS CAMADAS
 
 A estrutura segue a separacao do SmartHas: controller, service, repository,
 dto, model, config e exception. Foi mantido JDBC para Oracle. Cada dominio
@@ -294,7 +310,7 @@ O frontend consome endpoints REST com cabecalho UUID e contratos JSON descritos
 no Swagger. Os testes incluem a validacao dos horarios e do JSON paginado com
 os DTOs, alem dos fluxos reais Oracle com rollback.
 
-11. LOMBOK
+## 11. LOMBOK
 
 A dependencia Lombok usa a versao gerenciada pelo Spring Boot no pom.xml,
 com escopo provided. O maven-compiler-plugin declara o processador de anotacoes

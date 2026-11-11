@@ -1,11 +1,11 @@
-LEMBREI! - APLICATIVO REACT NATIVE + EXPO
-======================================
+# Lembrei! - Aplicativo React Native + Expo
+
 
 Aplicativo CitizenTech para organizar remedios e habitos, confirmar cuidados,
 acompanhar o estoque e visualizar a adesao semanal. A proposta contribui para
 o ODS 3: Saude e Bem-Estar, apoiando a organizacao da rotina pessoal.
 
-1. TECNOLOGIAS
+## 1. TECNOLOGIAS
 
 Expo SDK 57, React Native 0.86, React 19, TypeScript e Expo Router.
 O projeto usa a linha 57 do Expo, compativel com o Expo Go que suporta SDK 57.
@@ -17,7 +17,7 @@ v4; SecureStore armazena o UUID no celular; AsyncStorage guarda o identificador
 da web e as preferencias. Nao sao solicitadas permissoes de notificacao.
 React Native Web permite testar as mesmas telas no navegador.
 
-2. COMO EXECUTAR
+## 2. COMO EXECUTAR
 
 Use Node.js e npm instalados. O ambiente verificado utiliza Node 26.6.0.
 O React Native 0.86.3 instalado declara engines.node:
@@ -29,10 +29,12 @@ especificos, mas nao foi validado neste projeto em aparelho iOS.
 Mantenha a API Spring Boot executando no IntelliJ e o Oracle acessivel.
 Em um PowerShell, partindo da raiz do repositorio:
 
-  cd mobile-app
-  Copy-Item .env.example .env
-  npm ci
-  npm start
+```powershell
+cd mobile-app
+Copy-Item .env.example .env
+npm ci
+npm start
+```
 
 Copie o modelo somente na primeira configuracao, sem sobrescrever sua .env.
 Para uso diario basta npm start. O terminal mostra o QR Code. Abra com Expo Go no celular.
@@ -40,7 +42,9 @@ O computador e o celular devem estar na mesma rede local.
 
 Para abrir tambem no navegador, pressione w no terminal do Expo, ou execute:
 
-  npm run web
+```powershell
+npm run web
+```
 
 A versao web abre em http://localhost:8081. Nao execute dois servidores Expo
 simultaneamente na porta 8081. Um unico servidor atende celular e web.
@@ -50,10 +54,12 @@ O script scripts/start.mjs tenta escolher um IPv4 privado da rede local,
 ignorando interfaces com nome VPN/Radmin/WSL, para que o QR Code aponte ao PC.
 Se precisar escolher outra interface:
 
-  $env:REACT_NATIVE_PACKAGER_HOSTNAME = 'IP_DO_COMPUTADOR'
-  npm start
+```powershell
+$env:REACT_NATIVE_PACKAGER_HOSTNAME = 'IP_DO_COMPUTADOR'
+npm start
+```
 
-3. ENDERECO DA API
+## 3. ENDERECO DA API
 
 No navegador, o padrao e http://localhost:8080/api/v1.
 No Expo Go, o app tenta usar o host do servidor Expo, na porta 8080.
@@ -80,9 +86,10 @@ O CORS da API ja permite http://localhost:8081. Se abrir a versao web por um
 endereco LAN ou outra origem, acrescente essa origem em CORS_ORIGINS na
 configuracao do backend. CORS nao e utilizado pelo app nativo.
 
-4. FLUXOS DISPONIVEIS
+## 4. FLUXOS DISPONIVEIS
 
-HOJE
+### HOJE
+
 - Calendario semanal e consulta de outras datas.
 - Geracao e listagem das ocorrencias pela API, com estados de carregamento,
   vazio, falha e confirmacao.
@@ -90,7 +97,8 @@ HOJE
 - Marcar ocorrencia vencida como esquecida; permite confirmar posteriormente.
 - Confirmacao exige uma segunda acao para evitar toques acidentais.
 
-CUIDADOS
+### CUIDADOS
+
 - Listar e buscar remedios/habitos ativos e arquivados.
 - Criar um cuidado com nome, dose, quantidade, dias e horarios.
 - Horarios escolhidos por seletor nativo: relogio 24h no Android, rodas no iOS
@@ -98,23 +106,26 @@ CUIDADOS
 - Editar cadastro mantendo as regras de preservacao de historico do Oracle.
 - Arquivar e reativar, sem exclusao fisica.
 
-ESTOQUE
+### ESTOQUE
+
 - Saldo de remedios ativos e alertas de reposicao em ate tres dias.
 - Detalhes de consumo semanal, primeira dose prevista sem saldo e movimentos.
 - Reposicao validada e confirmada antes de enviar para a API.
 
-PROGRESSO
+### PROGRESSO
+
 - Consulta da semana atual e de semanas anteriores.
 - Adesao ponderada pelo total de ocorrencias, confirmadas, pendentes e esquecidas.
 - Antes do relatorio, gera ocorrencias da semana ate hoje para incluir cuidados
   nao confirmados. Como no banco existente, a geracao usa a agenda atual e nao
   reconstroi versoes antigas. Considera apenas horarios que ja chegaram.
 
-AJUSTES
+### AJUSTES
+
 - Nome de exibicao e endereco da API.
 - Estado da conexao e informacoes do identificador da instalacao.
 
-5. SEM LOGIN
+## 5. SEM LOGIN
 
 Na primeira abertura, o app gera UUID v4, persiste antes de acessar a API e
 chama POST /usuarios/identificar com nome inicial "Voce" (exibido com acento).
@@ -131,7 +142,7 @@ Nao ha recuperacao de conta ou sincronizacao de identidade entre aparelhos.
 Ao limpar o armazenamento do navegador, uma nova identidade sera gerada.
 O comportamento do SecureStore apos reinstalacao depende da plataforma.
 
-6. AGENDA NO APLICATIVO
+## 6. AGENDA NO APLICATIVO
 
 Os cuidados e horarios sao consultados na tela Hoje. O aplicativo nao agenda
 notificacoes do sistema nem solicita permissao para envia-las.
@@ -139,7 +150,7 @@ Ao abrir uma instalacao antiga, tenta cancelar apenas os agendamentos marcados
 como pertencentes ao Lembrei!. O pacote expo-notifications e mantido somente
 para essa limpeza, sem criar novos alarmes.
 
-7. CONTRATO E CONSISTENCIA
+## 7. CONTRATO E CONSISTENCIA
 
 src/services/api.ts implementa os endpoints documentados no Swagger da API.
 O aplicativo nao inclui credenciais Oracle nem conecta diretamente ao banco.
@@ -159,7 +170,7 @@ pela idempotencia do backend; a API e a unica responsavel pela baixa de estoque.
 Nao existe fila de gravacao offline. Sem conexao, o app apresenta a falha e
 permite tentar novamente; nao exibe confirmacoes que nao foram aceitas pela API.
 
-8. ESTRUTURA E RESPONSABILIDADES
+## 8. ESTRUTURA E RESPONSABILIDADES
 
 src/app/_layout.tsx: navegacao raiz, provedor global e area segura.
 src/app/(tabs)/: Hoje, Cuidados, Estoque e Progresso.
@@ -182,7 +193,7 @@ src/types/api.ts: contratos TypeScript correspondentes aos DTOs Java.
 src/theme.ts: cores e estilos compartilhados.
 assets/lembrei.svg: fonte vetorial do simbolo; PNGs sao exportacoes para o Expo.
 
-9. MEMORIA, EFICIENCIA E ACESSIBILIDADE
+## 9. MEMORIA, EFICIENCIA E ACESSIBILIDADE
 
 - FlatList virtualiza as listas da rotina, cuidados, estoque e progresso.
 - A API e consumida em paginas de 50, com limite defensivo de 1000 registros
@@ -201,19 +212,23 @@ assets/lembrei.svg: fonte vetorial do simbolo; PNGs sao exportacoes para o Expo.
   dentro de KeyboardProvider, para manter o TextInput focado visivel no Android
   e iOS. O componente e incluido no Expo Go do SDK 57. A web usa ScrollView.
 
-10. VERIFICACOES
+## 10. VERIFICACOES
 
-  npm run typecheck
-  npm run lint
-  npm test
-  npx expo-doctor
-  npx expo install --check
-  npm run export:web
-  npx expo export --platform android --output-dir dist-native
+```powershell
+npm run typecheck
+npm run lint
+npm test
+npx expo-doctor
+npx expo install --check
+npm run export:web
+npx expo export --platform android --output-dir dist-native
+```
 
 Testes no navegador, com o servidor Expo ja ligado em localhost:8081:
 
-  npm run test:e2e
+```powershell
+npm run test:e2e
+```
 
 Os testes Playwright usam Microsoft Edge por padrao, em viewport de celular e
 desktop. Se Edge nao estiver instalado, ajuste launchOptions.channel em
@@ -228,7 +243,7 @@ identidade persistente, nome, erros, edicao, arquivamento e reativacao.
 
 A exportacao Android verifica o bundle, sem executar um emulador.
 
-11. FUNCOES, METODOS E COMPONENTES
+## 11. FUNCOES, METODOS E COMPONENTES
 
 AppProvider inicializa o UUID, configura ApiClient e identifica a instalacao.
 useApp fornece esse estado para as telas. reconnect refaz a conexao;
@@ -274,11 +289,11 @@ visuais compartilhados. ConnectionState apresenta carregamento, erro e reconexao
 clearLegacyReminders cancela somente agendamentos identificados como lembrei
 de instalacoes anteriores. Na web nao faz operacoes nativas nem pede permissoes.
 
-12. LIMITES E DOCUMENTACAO GERAL
+## 12. LIMITES E DOCUMENTACAO GERAL
 
 Nao ha modo offline de negocio nem notificacoes ativas. Confirmacoes e estoque
 dependem da API e do Oracle. Android e web nao compartilham identidade.
 A previsao presume a agenda atual, sem reconstruir historicos antigos.
 Para proposta, publico, ODS, arquitetura e roteiro integrado, veja ../README.md.
 Para entidades e relacionamentos, veja ../database/modelo/README.md.
-Os detalhes HTTP estao em ../backend-api/lembrei-api/README.txt.
+Os detalhes HTTP estao em ../backend-api/lembrei-api/README.md.

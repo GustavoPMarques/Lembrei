@@ -273,5 +273,5 @@ evitando repetir todos os dados do item a cada confirmacao. Chaves estrangeiras,
 unicidade por horario/instante e checks complementam as regras PL/SQL. A baixa
 de estoque fica nas triggers para participar da mesma transacao da confirmacao.
 
-Veja tambem o [guia geral](../README.md), a [API](../backend-api/lembrei-api/README.txt)
+Veja tambem o [guia geral](../README.md), a [API](../backend-api/lembrei-api/README.md)
 e as [orientacoes de seguranca](../SEGURANCA.txt).

@@ -8,8 +8,8 @@ Nao prescreve medicamentos nem substitui orientacao profissional.
 GUIA COMPLETO
 README.md: problema, publico, funcionalidades, arquitetura, tecnologias,
 justificativas, execucao, eficiencia, acessibilidade e limites da solucao.
-backend-api/lembrei-api/README.txt: contratos, classes, metodos e testes da API.
-mobile-app/README.txt: telas, componentes, funcoes e execucao Expo Go/web.
+backend-api/lembrei-api/README.md: contratos, classes, metodos e testes da API.
+mobile-app/README.md: telas, componentes, funcoes e execucao Expo Go/web.
 database/README.md: instalacao Oracle, procedures, packages, triggers e testes.
 database/modelo/README.md: MER, DER, relacionamentos e dicionario de dados.
 SEGURANCA.txt: protecao de credenciais e cuidados ao publicar o repositorio.

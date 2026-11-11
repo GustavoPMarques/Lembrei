@@ -50,8 +50,8 @@ O [SmartHas](https://github.com/GustavoPMarques/SmartHas) foi utilizado como ref
 ## Organização da documentação
 
 - [README.txt](README.txt): guia de execução e índice em texto simples.
-- [Backend](backend-api/lembrei-api/README.txt): endpoints, validações, classes, transações e testes.
-- [Aplicativo](mobile-app/README.txt): execução no Expo Go e web, telas, métodos e gerenciamento de memória.
+- [Backend](backend-api/lembrei-api/README.md): endpoints, validações, classes, transações e testes.
+- [Aplicativo](mobile-app/README.md): execução no Expo Go e web, telas, métodos e gerenciamento de memória.
 - [Banco](database/README.md): instalação, rotinas PL/SQL e testes.
 - [MER, DER e dicionário de dados](database/modelo/README.md).
 - [Diagrama relacional em PNG](database/modelo/lembrei_modelo_relacional.png).
