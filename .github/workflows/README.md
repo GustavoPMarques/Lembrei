@@ -1,6 +1,6 @@
 # CI/CD do Lembrei
 
-O workflow [ci-cd.yml](workflows/ci-cd.yml) executa em pushes e pull requests
+O workflow [ci-cd.yml](ci-cd.yml) executa em pushes e pull requests
 para `main`, e também pode ser iniciado manualmente pelo GitHub Actions.
 
 As verificações são:
